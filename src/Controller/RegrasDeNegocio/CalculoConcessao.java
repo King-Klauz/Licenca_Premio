@@ -5,6 +5,7 @@ import Model.Servidor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 
 public class CalculoConcessao {
@@ -225,16 +226,13 @@ public class CalculoConcessao {
                         }
                     }
                 }
-                System.out.println(auxMatricula);
-                System.out.println(dataIngresso);
 
-                //dataIngresso = servidoresAptos.get(i).getDataIngresso();
                 LocalDate dataLimite = LocalDate.of(2023, 9, 29);
-
 
                 if (dataIngresso.plusYears(5).isAfter(dataLimite)) {
                     //continue;
                 } else {
+
                     int somarDiasAfastamento = 0;
 
                     if (!servidoresAptos.get(i).getAfastamentos().isEmpty()) {
@@ -254,7 +252,6 @@ public class CalculoConcessao {
                         String nome = servidoresAptos.get(i).getNome();
 
                         Servidor servidor = new Servidor(matricula, nome, servidoresAptos.get(i).getDataIngresso());
-
                         Concessao concessao = new Concessao(1, dataIngresso, dataIngresso.plusYears(5).plusDays(somarDiasAfastamento),
                                 90, servidoresAptos.get(i).getDataIngresso(), 1, "LICENCA PREMIO POR ASSIDUIDADE");
 
@@ -268,4 +265,40 @@ public class CalculoConcessao {
             i++;
         }
     }
+
+    /*public static void inserirNovasConcessoes(ArrayList<Servidor> servidoresAptos, Hashtable<String, Servidor> concessaoList, ArrayList<Servidor> planilhaExcel){
+        int i = 0;
+
+        while(i<servidoresAptos.size()){
+
+            String matricula = servidoresAptos.get(i).getMatricula();
+            if(concessaoList.containsKey(matricula)){
+                Servidor servidor = concessaoList.get(matricula);
+                Servidor servidorAux = new Servidor(servidor.getMatricula(), servidor.getNome(), servidor.getDataIngresso());
+                int j = 0;
+
+                while(j<servidor.getConcessoes().size()){
+                    int numeroConcessao = 999999999;
+                    if(servidor.getConcessoes().get(j).getCodigoLicenca() == 1
+                    && servidor.getConcessoes().get(j).getSaldoConcessao()>=45){
+                        Concessao concessao =  servidor.getConcessoes().get(j);
+                        if(servidor.getConcessoes().get(j).getNumConcessao()<numeroConcessao){
+                            numeroConcessao=servidor.getConcessoes().get(j).getNumConcessao();
+                            concessao =  servidor.getConcessoes().get(j);
+                        }
+                        servidorAux.getConcessoes().add(concessao);
+                    }
+                    j++;
+                }
+                planilhaExcel.add(servidorAux);
+            }
+            i++;
+        }
+
+    }*/
+
+    public static void listarConcessoes(ArrayList<Servidor> planilhaExcel){
+
+    }
+
 }

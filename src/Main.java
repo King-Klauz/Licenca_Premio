@@ -23,12 +23,12 @@ public class Main {
         AfastamentoService.leitorAfastamentos(concessaoList, servidoresAptos);
 
         //System.out.printf("Matrícula: ");
-        //String matricula = scan.nextLine();
+        String matricula = "14134";
 
         CalculoConcessao.aux(servidoresAptos, concessaoList, planilhaExcel);
-        Render.findServidor(concessaoList, "80549");
+        Render.findServidor(concessaoList, matricula);
 
-        Render.listarAfastamentos(concessaoList, "80549");
+        Render.listarAfastamentos(concessaoList, matricula);
 
         /*for(int i = 0; i<servidoresAptos.size(); i++){
             if(servidoresAptos.get(i).getMatricula().equals("162362")){
