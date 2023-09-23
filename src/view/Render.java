@@ -10,7 +10,7 @@ public class Render {
 
         if (concessaoList.containsKey(matricula)) {
             Servidor servidor = concessaoList.get(matricula);
-            System.out.println(servidor.getMatricula() + " " + servidor.getNome());
+            System.out.println(servidor.getMatricula() + " " + servidor.getNome() + "\n" + servidor.getFlag());
 
             for(int i = 0; i<servidor.getConcessoes().size(); i++){
                 System.out.println(servidor.getConcessoes().get(i).toString());

@@ -26,6 +26,7 @@ public class CalculoConcessao {
                 while (j < servidor.getConcessoes().size()) {
                     LocalDate dataLimite = LocalDate.of(2023, 9, 29);
                     if (servidor.getConcessoes().get(j).getCodigoLicenca() == 1 && servidor.getConcessoes().get(j).getSaldoConcessao() >= 45) {
+                        servidor.setFlag("CONCESSAO JÁ DISPONIVEL");
                         LocalDate novaConcessaoDataInicio = servidor.getConcessoes().get(j).getDataInicio();
                         LocalDate novaConcessaoDataFim = servidor.getConcessoes().get(j).getDataFim();
                         int somarDiasAfastamento = 0;
@@ -37,21 +38,23 @@ public class CalculoConcessao {
                                 if (servidor.getAfastamentos().get(r).getDataInicio().isAfter(servidor.getConcessoes().get(j).getDataInicio())
                                         && servidor.getAfastamentos().get(r).getDataInicio().isBefore(servidor.getConcessoes().get(j).getDataFim())) {
                                     novaConcessaoDataInicio = servidor.getAfastamentos().get(r).getDataFim();
-                                    novaConcessaoDataFim = servidor.getAfastamentos().get(r).getDataFim().plusYears(5);
+                                    novaConcessaoDataFim = servidor.getAfastamentos().get(r).getDataFim().plusDays(1825);
                                     flagNovaConcessao = 1;
                                 }
                             }
                             r++;
                         }
                         r = 0;
-                        while (r < servidor.getAfastamentos().size()) {
-                            if (servidor.getAfastamentos().get(r).getAcao().equals("SUSPENDE")) {
-                                if (servidor.getAfastamentos().get(r).getDataInicio().isAfter(novaConcessaoDataInicio)
-                                        && servidor.getAfastamentos().get(r).getDataInicio().isBefore(novaConcessaoDataFim)) {
-                                    somarDiasAfastamento = somarDiasAfastamento + servidor.getAfastamentos().get(r).getDias();
+                        if(flagNovaConcessao==1){
+                            while (r < servidor.getAfastamentos().size()) {
+                                if (servidor.getAfastamentos().get(r).getAcao().equals("SUSPENDE")) {
+                                    if (servidor.getAfastamentos().get(r).getDataInicio().isAfter(novaConcessaoDataInicio)
+                                            && servidor.getAfastamentos().get(r).getDataInicio().isBefore(novaConcessaoDataFim)) {
+                                        somarDiasAfastamento = somarDiasAfastamento + servidor.getAfastamentos().get(r).getDias();
+                                    }
                                 }
+                                r++;
                             }
-                            r++;
                         }
 
                         if (novaConcessaoDataFim.plusDays(somarDiasAfastamento).isBefore(dataLimite)) {
@@ -79,8 +82,8 @@ public class CalculoConcessao {
                     while(k<servidor.getConcessoes().size()){
                         if(servidor.getConcessoes().get(k).getNumConcessao()>numeroConcessao){
                             numeroConcessao = servidor.getConcessoes().get(k).getNumConcessao();
-                            novaConcessaoDataInicio = servidor.getConcessoes().get(k).getDataFim();
-                            novaConcessaoDataFim = servidor.getConcessoes().get(k).getDataFim().plusYears(5);
+                            novaConcessaoDataInicio = servidor.getConcessoes().get(k).getDataFim().plusDays(1);
+                            novaConcessaoDataFim = servidor.getConcessoes().get(k).getDataFim().plusDays(1825).plusDays(1);
                         }
                         k++;
                     }
@@ -94,8 +97,8 @@ public class CalculoConcessao {
                         if (servidor.getAfastamentos().get(r).getAcao().equals("INTERROMPE")) {
                             if (servidor.getAfastamentos().get(r).getDataInicio().isAfter(novaConcessaoDataInicio)
                                     && servidor.getAfastamentos().get(r).getDataInicio().isBefore(novaConcessaoDataFim)) {
-                                novaConcessaoDataInicio = servidor.getAfastamentos().get(r).getDataFim();
-                                novaConcessaoDataFim = servidor.getAfastamentos().get(r).getDataFim().plusYears(5);
+                                novaConcessaoDataInicio = servidor.getAfastamentos().get(r).getDataFim().minusDays(1);
+                                novaConcessaoDataFim = servidor.getAfastamentos().get(r).getDataFim().plusDays(1825).minusDays(1);
                             }
                         }
                         r++;
@@ -116,6 +119,9 @@ public class CalculoConcessao {
                             Concessao concessao = new Concessao(numeroConcessao + 1, novaConcessaoDataInicio, novaConcessaoDataFim.plusDays(somarDiasAfastamento),
                                     90, servidor.getDataIngresso(), 1, "LICENCA PREMIO POR ASSIDUIDADE");
                             servidor.getConcessoes().add(concessao);
+                        servidor.setFlag("NOVA CONCESSAO GERADA");
+                    }else{
+                        servidor.setFlag("NAO TEM CONCESSAO DISPONIVEL");
                     }
 
                     /*while (k < servidor.getAfastamentos().size()) {
@@ -221,7 +227,7 @@ public class CalculoConcessao {
                 for (int b = 0; b < servidoresAptos.get(i).getAfastamentos().size(); b++) {
                     if (servidoresAptos.get(i).getAfastamentos().get(b).getAcao().equals("INTERROMPE")) {
                         if (dataIngresso.isBefore(servidoresAptos.get(i).getAfastamentos().get(b).getDataInicio())
-                                && dataIngresso.plusYears(5).isAfter(servidoresAptos.get(i).getAfastamentos().get(b).getDataInicio())) {
+                                && dataIngresso.plusDays(1825).isAfter(servidoresAptos.get(i).getAfastamentos().get(b).getDataInicio())) {
                             dataIngresso = servidoresAptos.get(i).getAfastamentos().get(b).getDataFim();
                         }
                     }
@@ -229,8 +235,8 @@ public class CalculoConcessao {
 
                 LocalDate dataLimite = LocalDate.of(2023, 9, 29);
 
-                if (dataIngresso.plusYears(5).isAfter(dataLimite)) {
-                    //continue;
+                if (dataIngresso.plusDays(1825).isAfter(dataLimite)) {
+                    servidoresAptos.get(i).setFlag("NAO TEM CONCESSAO DISPONIVEL");
                 } else {
 
                     int somarDiasAfastamento = 0;
@@ -239,26 +245,29 @@ public class CalculoConcessao {
                         for (int x = 0; x < servidoresAptos.get(i).getAfastamentos().size(); x++) {
                             if (servidoresAptos.get(i).getAfastamentos().get(x).getAcao().equals("SUSPENDE")) {
                                 if (dataIngresso.isBefore(servidoresAptos.get(i).getAfastamentos().get(x).getDataInicio())
-                                        && dataIngresso.plusYears(5).isAfter(servidoresAptos.get(i).getAfastamentos().get(x).getDataInicio())) {
+                                        && dataIngresso.plusDays(1825).isAfter(servidoresAptos.get(i).getAfastamentos().get(x).getDataInicio())) {
                                     somarDiasAfastamento = somarDiasAfastamento + servidoresAptos.get(i).getAfastamentos().get(x).getDias();
                                 }
                             }
                         }
                     }
 
-                    if (dataIngresso.plusYears(5).plusDays(somarDiasAfastamento).isBefore(dataLimite)) {
+                    if (dataIngresso.plusDays(1825).plusDays(somarDiasAfastamento).isBefore(dataLimite)) {
 
                         String matricula = servidoresAptos.get(i).getMatricula();
                         String nome = servidoresAptos.get(i).getNome();
 
                         Servidor servidor = new Servidor(matricula, nome, servidoresAptos.get(i).getDataIngresso());
-                        Concessao concessao = new Concessao(1, dataIngresso, dataIngresso.plusYears(5).plusDays(somarDiasAfastamento),
+                        Concessao concessao = new Concessao(1, dataIngresso, dataIngresso.plusDays(1825).plusDays(somarDiasAfastamento),
                                 90, servidoresAptos.get(i).getDataIngresso(), 1, "LICENCA PREMIO POR ASSIDUIDADE");
 
                         servidor.getConcessoes().add(concessao);
                         servidor.setAfastamentos(servidoresAptos.get(i).getAfastamentos());
+                        servidor.setFlag("PRIMEIRA CONCESSAO GERADA");
 
                         concessaoList.put(matricula, servidor);
+                    }else{
+                        servidoresAptos.get(i).setFlag("NAO TEM CONCESSAO DISPONIVEL");
                     }
                 }
             }
@@ -266,7 +275,7 @@ public class CalculoConcessao {
         }
     }
 
-    /*public static void inserirNovasConcessoes(ArrayList<Servidor> servidoresAptos, Hashtable<String, Servidor> concessaoList, ArrayList<Servidor> planilhaExcel){
+    public static void inserirNovasConcessoes(ArrayList<Servidor> servidoresAptos, Hashtable<String, Servidor> concessaoList, ArrayList<Servidor> planilhaExcel){
         int i = 0;
 
         while(i<servidoresAptos.size()){
@@ -275,30 +284,45 @@ public class CalculoConcessao {
             if(concessaoList.containsKey(matricula)){
                 Servidor servidor = concessaoList.get(matricula);
                 Servidor servidorAux = new Servidor(servidor.getMatricula(), servidor.getNome(), servidor.getDataIngresso());
-                int j = 0;
 
-                while(j<servidor.getConcessoes().size()){
-                    int numeroConcessao = 999999999;
-                    if(servidor.getConcessoes().get(j).getCodigoLicenca() == 1
-                    && servidor.getConcessoes().get(j).getSaldoConcessao()>=45){
-                        Concessao concessao =  servidor.getConcessoes().get(j);
-                        if(servidor.getConcessoes().get(j).getNumConcessao()<numeroConcessao){
-                            numeroConcessao=servidor.getConcessoes().get(j).getNumConcessao();
-                            concessao =  servidor.getConcessoes().get(j);
+                int j = servidor.getConcessoes().size();
+                int numeroConcessao = 999999999;
+
+                while(j>0){
+                    int index = j-1;
+
+                    if(servidor.getConcessoes().get(index).getCodigoLicenca() == 1
+                    && servidor.getConcessoes().get(index).getSaldoConcessao()>=45){
+                        Concessao concessao;
+
+                        if(servidor.getConcessoes().get(index).getNumConcessao()<numeroConcessao){
+                            numeroConcessao=servidor.getConcessoes().get(index).getNumConcessao();
+                            concessao =  servidor.getConcessoes().get(index);
+                            if(servidorAux.getConcessoes().isEmpty()){
+                                servidorAux.getConcessoes().add(concessao);
+                            }else{
+                                servidorAux.getConcessoes().clear();
+                                servidorAux.getConcessoes().add(concessao);
+                            }
                         }
-                        servidorAux.getConcessoes().add(concessao);
                     }
-                    j++;
+                    j--;
                 }
                 planilhaExcel.add(servidorAux);
             }
             i++;
         }
 
-    }*/
+    }
 
     public static void listarConcessoes(ArrayList<Servidor> planilhaExcel){
 
+        for(int i = 0; i< planilhaExcel.size(); i++){
+            for(int j = 0;j<planilhaExcel.get(i).getConcessoes().size();j++){
+                System.out.println(planilhaExcel.get(i).getMatricula() + " " + planilhaExcel.get(i).getNome() + "\n" + planilhaExcel.get(i).getFlag());
+                System.out.println(planilhaExcel.get(i).getConcessoes().get(j));
+            }
+        }
     }
 
 }

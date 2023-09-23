@@ -13,10 +13,20 @@ public class Servidor {
     private ArrayList<Concessao> concessoes = new ArrayList<>();
     private ArrayList<Afastamentos> afastamentos = new ArrayList<>();
 
+    private String flag = "";
+
     public Servidor(String matricula, String nome, LocalDate dataIngresso){
         this.matricula = matricula;
         this.nome = nome;
         this.dataIngresso = dataIngresso;
+    }
+
+    public String getFlag() {
+        return flag;
+    }
+
+    public void setFlag(String flag) {
+        this.flag = flag;
     }
 
     public LocalDate getDataIngresso() {
