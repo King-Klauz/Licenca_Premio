@@ -14,11 +14,20 @@ public class Servidor {
     private ArrayList<Afastamentos> afastamentos = new ArrayList<>();
 
     private String flag = "";
+    int diasAfastado = 0;
 
     public Servidor(String matricula, String nome, LocalDate dataIngresso){
         this.matricula = matricula;
         this.nome = nome;
         this.dataIngresso = dataIngresso;
+    }
+
+    public int getDiasAfastado() {
+        return diasAfastado;
+    }
+
+    public void setDiasAfastado(int diasAfastado) {
+        this.diasAfastado = diasAfastado;
     }
 
     public String getFlag() {

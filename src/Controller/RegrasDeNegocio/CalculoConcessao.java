@@ -45,17 +45,18 @@ public class CalculoConcessao {
                             r++;
                         }
                         r = 0;
-                        if(flagNovaConcessao==1){
+                        //if(flagNovaConcessao==1){
                             while (r < servidor.getAfastamentos().size()) {
                                 if (servidor.getAfastamentos().get(r).getAcao().equals("SUSPENDE")) {
                                     if (servidor.getAfastamentos().get(r).getDataInicio().isAfter(novaConcessaoDataInicio)
                                             && servidor.getAfastamentos().get(r).getDataInicio().isBefore(novaConcessaoDataFim)) {
-                                        somarDiasAfastamento = somarDiasAfastamento + servidor.getAfastamentos().get(r).getDias();
+                                        //somarDiasAfastamento = somarDiasAfastamento + servidor.getAfastamentos().get(r).getDias();
+                                        servidor.setDiasAfastado(servidor.getDiasAfastado() + servidor.getAfastamentos().get(r).getDias());
                                     }
                                 }
                                 r++;
                             }
-                        }
+                        //}
 
                         if (novaConcessaoDataFim.plusDays(somarDiasAfastamento).isBefore(dataLimite)) {
                             if (flagNovaConcessao == 1) {
@@ -120,8 +121,10 @@ public class CalculoConcessao {
                                     90, servidor.getDataIngresso(), 1, "LICENCA PREMIO POR ASSIDUIDADE");
                             servidor.getConcessoes().add(concessao);
                         servidor.setFlag("NOVA CONCESSAO GERADA");
+                        servidor.setDiasAfastado(somarDiasAfastamento);
                     }else{
                         servidor.setFlag("NAO TEM CONCESSAO DISPONIVEL");
+                        servidor.setDiasAfastado(somarDiasAfastamento);
                     }
 
                     /*while (k < servidor.getAfastamentos().size()) {
@@ -264,6 +267,7 @@ public class CalculoConcessao {
                         servidor.getConcessoes().add(concessao);
                         servidor.setAfastamentos(servidoresAptos.get(i).getAfastamentos());
                         servidor.setFlag("PRIMEIRA CONCESSAO GERADA");
+                        servidor.setDiasAfastado(somarDiasAfastamento);
 
                         concessaoList.put(matricula, servidor);
                     }else{
@@ -300,9 +304,11 @@ public class CalculoConcessao {
                             concessao =  servidor.getConcessoes().get(index);
                             if(servidorAux.getConcessoes().isEmpty()){
                                 servidorAux.getConcessoes().add(concessao);
+                                servidorAux.setFlag(servidor.getFlag());
                             }else{
                                 servidorAux.getConcessoes().clear();
                                 servidorAux.getConcessoes().add(concessao);
+                                servidorAux.setFlag(servidor.getFlag());
                             }
                         }
                     }
@@ -320,7 +326,7 @@ public class CalculoConcessao {
         for(int i = 0; i< planilhaExcel.size(); i++){
             for(int j = 0;j<planilhaExcel.get(i).getConcessoes().size();j++){
                 System.out.println(planilhaExcel.get(i).getMatricula() + " " + planilhaExcel.get(i).getNome() + "\n" + planilhaExcel.get(i).getFlag());
-                System.out.println(planilhaExcel.get(i).getConcessoes().get(j));
+                System.out.println(planilhaExcel.get(i).getConcessoes().get(j)+"\n");
             }
         }
     }

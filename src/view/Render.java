@@ -16,6 +16,8 @@ public class Render {
                 System.out.println(servidor.getConcessoes().get(i).toString());
             }
 
+            System.out.println("dias de afastasmento-> "+ servidor.getDiasAfastado()+" DIAS.");
+
         } else {
             System.out.println("Servidor não encontrado");
         }
