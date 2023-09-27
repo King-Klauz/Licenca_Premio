@@ -98,8 +98,8 @@ public class CalculoConcessao {
                         if (servidor.getAfastamentos().get(r).getAcao().equals("INTERROMPE")) {
                             if (servidor.getAfastamentos().get(r).getDataInicio().isAfter(novaConcessaoDataInicio)
                                     && servidor.getAfastamentos().get(r).getDataInicio().isBefore(novaConcessaoDataFim)) {
-                                novaConcessaoDataInicio = servidor.getAfastamentos().get(r).getDataFim().minusDays(1);
-                                novaConcessaoDataFim = servidor.getAfastamentos().get(r).getDataFim().plusDays(1825).minusDays(1);
+                                novaConcessaoDataInicio = servidor.getAfastamentos().get(r).getDataFim();
+                                novaConcessaoDataFim = servidor.getAfastamentos().get(r).getDataFim().plusDays(1825);
                             }
                         }
                         r++;
@@ -240,6 +240,8 @@ public class CalculoConcessao {
 
                 if (dataIngresso.plusDays(1825).isAfter(dataLimite)) {
                     servidoresAptos.get(i).setFlag("NAO TEM CONCESSAO DISPONIVEL");
+                    System.out.println(servidoresAptos.get(i).getMatricula());
+                    concessaoList.put(servidoresAptos.get(i).getMatricula(), servidoresAptos.get(i));
                 } else {
 
                     int somarDiasAfastamento = 0;
@@ -272,9 +274,11 @@ public class CalculoConcessao {
                         concessaoList.put(matricula, servidor);
                     }else{
                         servidoresAptos.get(i).setFlag("NAO TEM CONCESSAO DISPONIVEL");
+                        concessaoList.put(servidoresAptos.get(i).getMatricula(), servidoresAptos.get(i));
                     }
                 }
             }
+
             i++;
         }
     }
@@ -285,9 +289,9 @@ public class CalculoConcessao {
         while(i<servidoresAptos.size()){
 
             String matricula = servidoresAptos.get(i).getMatricula();
+            Servidor servidor = concessaoList.get(matricula);
+            Servidor servidorAux = new Servidor(servidor.getMatricula(), servidor.getNome(), servidor.getDataIngresso());
             if(concessaoList.containsKey(matricula)){
-                Servidor servidor = concessaoList.get(matricula);
-                Servidor servidorAux = new Servidor(servidor.getMatricula(), servidor.getNome(), servidor.getDataIngresso());
 
                 int j = servidor.getConcessoes().size();
                 int numeroConcessao = 999999999;
@@ -305,28 +309,37 @@ public class CalculoConcessao {
                             if(servidorAux.getConcessoes().isEmpty()){
                                 servidorAux.getConcessoes().add(concessao);
                                 servidorAux.setFlag(servidor.getFlag());
+                                servidorAux.setDiasAfastado(servidor.getDiasAfastado());
                             }else{
                                 servidorAux.getConcessoes().clear();
                                 servidorAux.getConcessoes().add(concessao);
                                 servidorAux.setFlag(servidor.getFlag());
+                                servidorAux.setDiasAfastado(servidor.getDiasAfastado());
                             }
                         }
+                    }else{
+                        servidorAux.setFlag(servidor.getFlag());
                     }
                     j--;
                 }
-                planilhaExcel.add(servidorAux);
             }
+
+            planilhaExcel.add(servidorAux);
             i++;
         }
-
     }
 
-    public static void listarConcessoes(ArrayList<Servidor> planilhaExcel){
+    public static void listarConcessoes(ArrayList<Servidor> planilhaExcel, String matricula){
 
         for(int i = 0; i< planilhaExcel.size(); i++){
-            for(int j = 0;j<planilhaExcel.get(i).getConcessoes().size();j++){
-                System.out.println(planilhaExcel.get(i).getMatricula() + " " + planilhaExcel.get(i).getNome() + "\n" + planilhaExcel.get(i).getFlag());
-                System.out.println(planilhaExcel.get(i).getConcessoes().get(j)+"\n");
+            if(planilhaExcel.get(i).getMatricula().equals(matricula)){
+                System.out.println("===========================EXCEL===========================\n");
+                for(int j = 0;j<planilhaExcel.get(i).getConcessoes().size();j++){
+                    System.out.println(planilhaExcel.get(i).getConcessoes().size());
+                    System.out.println(planilhaExcel.get(i).getMatricula() + " " + planilhaExcel.get(i).getNome() + "\n" + planilhaExcel.get(i).getFlag());
+                    System.out.println(planilhaExcel.get(i).getConcessoes().get(j));
+                    System.out.println("dias de afastasmento-> "+planilhaExcel.get(i).getDiasAfastado()+" DIAS."+"\n");
+                }
             }
         }
     }

@@ -45,7 +45,7 @@ public class ConcessaoService {
                 String dividir[];
                 dividir = linha.split(";");
 
-                //System.out.println(linha);
+
 
                 matricula = dividir[0];
                 nome = dividir[1];
@@ -62,6 +62,8 @@ public class ConcessaoService {
                 concessao = new Concessao (numConcessao, dataInicio, dataFim, saldoConcessao,
                                                         dataIngOrgaoFormatada, codigoLicenca, licenca);
 
+                //System.out.println(matricula);
+
                 if(matricula.equals(matriculaAnterior)){
                     concessaoList.get(matricula).getConcessoes().add(concessao);
                 }else{
@@ -69,6 +71,7 @@ public class ConcessaoService {
                     concessaoList.put(matricula, servidor);
                 }
                 matriculaAnterior = matricula;
+
             }
             leitor.close();
         }catch(FileNotFoundException file){

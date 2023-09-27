@@ -24,13 +24,15 @@ public class Render {
     }
 
     public static  void listarAfastamentos(Hashtable<String, Servidor> concessaoList, String matricula){
-        System.out.println("");
+        System.out.println();
         if(concessaoList.containsKey(matricula)){
             if (!concessaoList.get(matricula).getAfastamentos().isEmpty()) {
                 System.out.println("Servidor encontrado na lista com afastamentos:");
                 for(int i = 0; i<concessaoList.get(matricula).getAfastamentos().size(); i++){
                     System.out.println(concessaoList.get(matricula).getAfastamentos().get(i).toString());
+
                 }
+                System.out.println();
             }
         } else {
             System.out.println("Servidor não encontrado na lista com afastamentos:");
